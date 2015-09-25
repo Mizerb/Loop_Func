@@ -8,13 +8,13 @@
 #ifndef LOOP_H_
 #define LOOP_H_
 
-/*
+//void(*f)(int*,int) CUDA DON"T LIKE
 typedef void (*loop_kernal)(void* , unsigned);
-inline void loop_exec(loop_kernel kernel,
+extern "C" void loop_exec( void (*loop_kernal)(void*,unsigned),
 				void* arg, unsigned arg_bytes,
 				unsigned n);
-*/
-inline void* loop_malloc( unsigned n);
+
+extern "C" void* loop_malloc( unsigned n);
 extern "C" void loop_free( void *p);
 
 

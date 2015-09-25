@@ -8,4 +8,4 @@ Loop.o :
 	nvcc -arch=sm_20 -dlink Loop.o -o link.o
 	
 clean: 
-	rm -rf *o program
+	rm -rf *.o program
