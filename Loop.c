@@ -4,5 +4,13 @@
 
 void loop_free( void *p)
 {
-	printf("no");
+	free(p);
 }
+
+void* loop_malloc( unsigned n)
+{
+	unsigned *i = malloc( sizeof(int) *n );
+	return i;
+}
+
+
