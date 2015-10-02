@@ -18,15 +18,11 @@ extern "C" void* loop_malloc( unsigned n)
 	return i;
 }
 
-extern "C" void loop_exec( void (*loop_kernal)(void*,unsigned),
+extern "C" void loop_exec( void (*loop_kernal)(void*,unsigned,unsigned),
 				void* arg, unsigned arg_bytes,
 				unsigned n)
 {
-	dim3 Block ( 4 ,  1);
-
-
-	(*loop_kernal)<<<n,BLOCK_SIZE>>>(arg, arg_bytes);
-
-
-
+	(*loop_kernal)<<<ceildiv((n), BLOCK_SIZE),BLOCK_SIZE>>>(arg, arg_bytes , -1);
+	//not sure what else to put. I really would like to work in a class for this part
+	// Going to have to talk it out via email... I guess
 }

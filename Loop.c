@@ -15,7 +15,7 @@ void* loop_malloc( unsigned n)
 }
 
 
-void loop_exec( void(*loop_kernal)(void* , unsigned),
+void loop_exec( void(*loop_kernal)(void* , unsigned, unsigned),
 		void* arg, unsigned arg_bytes,
 		unsigned n)
 {
@@ -24,7 +24,7 @@ void loop_exec( void(*loop_kernal)(void* , unsigned),
 		#pragma omp for
 		for( unsigned i = 0 ; i<n ; i++)
 		{
-			(*loop_kernal)(arg, arg_bytes); //Problem of how do I know where I am???
+			(*loop_kernal)(arg, arg_bytes, i); //Problem of how do I know where I am???
 		}
 	}
 }
