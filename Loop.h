@@ -9,13 +9,22 @@
 #define LOOP_H_
 
 //void(*f)(int*,int) CUDA DON"T LIKE
-typedef void (*loop_kernal)(void* , unsigned);
-extern "C" void loop_exec( void (*loop_kernal)(void*,unsigned),
+
+struct arg{
+	unsigned int* a;
+	unsigned int* b;
+};
+
+
+typedef void (*loop_kernal)(void* , unsigned, unsigned);
+extern "C" void loop_exec( void (*loop_kernal)(void*,unsigned, unsigned),
 				void* arg, unsigned arg_bytes,
 				unsigned n);
 
 extern "C" void* loop_malloc( unsigned n);
 extern "C" void loop_free( void *p);
+
+extern "C" void GENDATA( void *p);
 
 
 

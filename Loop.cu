@@ -10,11 +10,17 @@ extern "C" void loop_free(void *p)
 	CUDACALL(cudaFree(p));
 }
 
+extern "C" void GENDATA( void *p){
+	unsigned a[] = {1,1};
 
-extern "C" void* loop_malloc( unsigned n)
+	CUDACALL( cudaMemcpy(p , a , 2*sizeof(unsigned) , cudaMemcpyHostToDevice));
+}
+
+
+extern "C" void* loop_malloc( unsigned n )
 {
 	unsigned *i;
-	CUDACALL(cudaMalloc(&i, sizeof(int) * n));
+	CUDACALL(cudaMalloc( (void**)&i, sizeof(int) * n));
 	return i;
 }
 
@@ -26,3 +32,17 @@ extern "C" void loop_exec( void (*loop_kernal)(void*,unsigned,unsigned),
 	//not sure what else to put. I really would like to work in a class for this part
 	// Going to have to talk it out via email... I guess
 }
+
+
+
+__global__ void Run_Me( int* The_Array , int size)
+{
+	int ID = blockIdx.x;
+	if(ID < 4)
+	The_Array[ID] = The_Array[ID] * The_Array[ID];
+
+}
+
+
+
+

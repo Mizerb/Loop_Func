@@ -28,3 +28,10 @@ void loop_exec( void(*loop_kernal)(void* , unsigned, unsigned),
 		}
 	}
 }
+
+
+void GENDATA( void *p)
+{
+	unsigned a[] = {1,1};
+	p=a;
+}

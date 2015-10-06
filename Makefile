@@ -1,4 +1,4 @@
-all: program
+all: openmp
 
 
 openmp: 
