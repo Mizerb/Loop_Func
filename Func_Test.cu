@@ -31,6 +31,20 @@ void Test( thrust::device_vector<int> &A , void(*f)(int*,int) )
 	std::cout<<"this is the silliest thing, I have every done"<<std::endl;
 }
 
+template <typename T>
+void * arg_pass( T &a )
+{
+	T *i;	// So Nasty
+	CUDACALL(cudaMalloc( (void**)&i, sizeof(T) ));
+	CUDACALL( cudaMemcpy(i , &a , sizeof(T) , cudaMemcpyHostToDevice));
+	return i;
+}
+
+template <typename T>
+void * Something( T &a)
+{
+	cudaMemcpyToSymbol( &a , sizeof(T));
+}
 
 
 int main()
@@ -52,7 +66,8 @@ int main()
 	GENDATA(a.b);
 
 
-	loop_exec( Run_Me , &a , 2 , 2);
+
+	loop_exec( Run_Me , arg_pass(a) , 2 , 2);
 
 	cudaDeviceSynchronize();
 

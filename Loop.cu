@@ -28,6 +28,7 @@ extern "C" void loop_exec( void (*loop_kernal)(void*,unsigned,unsigned),
 				void* arg, unsigned arg_bytes,
 				unsigned n)
 {
+
 	//(*loop_kernal)<<<2,1>>>(arg, arg_bytes , -1);
 	CUDALAUNCH( (*loop_kernal) , n , (arg, arg_bytes, -1));
 	//not sure what else to put. I really would like to work in a class for this part
