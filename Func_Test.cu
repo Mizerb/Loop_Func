@@ -2,17 +2,19 @@
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
 #include "Loop.h"
-
+#include "mycuda.cuh"
 
 
 #include <stdio.h>
 
-__global__ void Run_Me( int* The_Array , int size)
+__global__ void Run_Me( void* INPUT, unsigned  n , unsigned size)
 {
-	int ID = blockIdx.x;
-	if(ID < 4)
-	The_Array[ID] = The_Array[ID] * The_Array[ID];
+	struct arg * The_Array = (struct arg*) INPUT;
 
+	int ID =CUDAINDEX;
+	if(ID < 2){
+	The_Array->c[ID] = The_Array->a[ID] + The_Array->b[ID];
+	}
 }
 
 
@@ -30,34 +32,41 @@ void Test( thrust::device_vector<int> &A , void(*f)(int*,int) )
 }
 
 
-/*
+
 int main()
 {
-	thrust::host_vector<int> C(4);
+	cudaDeviceReset();
 
-	C[0] = 1;
-	C[1] = 2;
-	C[2] = 3;
-	C[3] = 4;
+	struct arg a;
+	a.a  = (unsigned int*)loop_malloc( 2);
+	a.b  = (unsigned int*)loop_malloc( 2);
+	a.c =  (unsigned int*)loop_malloc(2);
 
-	/*
-	std::cout<<"RUnning"<<std::endl;
-	thrust::device_vector<int> A = C;
+	std::cout << a.a << std::endl;
 
-	Test(A, Run_Me);
+	unsigned int *d = new unsigned int[2];
 
-	for(int i = 0 ; i< 4 ;i++)
-	{
-		std::cout << A[i] <<std::endl;
-	}
-	char wait;
+	std::cout<< "ARG is" <<&a <<std::endl;
 
-	int *x; int a = 0;
-	x = &a;
+	GENDATA(a.a);
+	GENDATA(a.b);
 
-	loop_free( x);
-	int wait;
-	std::cin >> wait;
+
+	loop_exec( Run_Me , &a , 2 , 2);
+
+	cudaDeviceSynchronize();
+
+	std::cout << a.a << std::endl;
+
+	CUDACALL( cudaMemcpy(d , a.c , 2*sizeof(unsigned) , cudaMemcpyDeviceToHost));
+
+	cudaDeviceReset();
+
+	printf( "%d , %d\n", d[0] , d[1]);
+
+
+
+	return 0;
 
 }
-*/
+

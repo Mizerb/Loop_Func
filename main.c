@@ -9,6 +9,7 @@ void add( void* darg ,unsigned n, unsigned pos)
 
 }
 
+/*
 int main()
 {
 
@@ -36,6 +37,6 @@ int main()
 
 	return 0;
 }
-
+*/
 
 

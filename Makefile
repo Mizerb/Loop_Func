@@ -1,4 +1,4 @@
-all: openmp
+all: cuda
 
 
 openmp: 
@@ -13,4 +13,4 @@ Loop.o :
 	
 
 clean: 
-	rm -rf *.o program
+	rm -rf *.o *.out *.exe program
