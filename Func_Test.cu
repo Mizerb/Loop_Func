@@ -7,11 +7,11 @@
 
 #include <stdio.h>
 
-__global__ void Run_Me( void* INPUT, unsigned  n , unsigned size)
+__device__ void Run_Me( void* INPUT, unsigned  n , unsigned size)
 {
 	struct arg * The_Array = (struct arg*) INPUT;
 
-	int ID =CUDAINDEX;
+	int ID = size;
 	if(ID < 2){
 	The_Array->c[ID] = The_Array->a[ID] + The_Array->b[ID];
 	}
