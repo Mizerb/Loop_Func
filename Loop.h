@@ -5,9 +5,11 @@
  *      Author: ben
  */
 
+
+
 #ifndef LOOP_H_
 #define LOOP_H_
-
+#include "mycuda.cuh"
 //void(*f)(int*,int) CUDA DON"T LIKE
 
 struct arg{
@@ -23,11 +25,19 @@ void loop_exec( O op,
 				void* arg, unsigned arg_bytes,
 				unsigned n);
 
-extern "C" void* loop_malloc( unsigned n);
-extern "C" void loop_free( void *p);
+void* loop_malloc( unsigned n);
+void loop_free( void *p);
 
-extern "C" void GENDATA( void *p);
-template<class O> __global__ void loop_helper( O op, void* arg, unsigned arg_bytes);
+void GENDATA( void *p);
 
+template<class O> __global__
+void loop_helper( O op,
+				void* arg, unsigned arg_bytes)
+{
+	 unsigned i = CUDAINDEX;
+
+	 op( arg , arg_bytes, i);
+
+}
 
 #endif /* LOOP_H_ */

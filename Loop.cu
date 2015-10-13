@@ -5,19 +5,19 @@
 
 
 
-extern "C" void loop_free(void *p)
+void loop_free(void *p)
 {
 	CUDACALL(cudaFree(p));
 }
 
-extern "C" void GENDATA( void *p){
+void GENDATA( void *p){
 	unsigned a[2] = {1,1};
 
 	CUDACALL( cudaMemcpy(p , a , 2*sizeof(unsigned) , cudaMemcpyHostToDevice));
 }
 
 
-extern "C" void* loop_malloc( unsigned n )
+void* loop_malloc( unsigned n )
 {
 	unsigned *i;
 	CUDACALL(cudaMalloc( (void**)&i, sizeof(int) * n));
@@ -25,7 +25,7 @@ extern "C" void* loop_malloc( unsigned n )
 }
 
 typedef void (*loop_kernal_func)(void*,unsigned,unsigned) ;
-
+/*
 template<class O> __global__
 void loop_helper( O op,
 				void* arg, unsigned arg_bytes)
@@ -35,7 +35,7 @@ void loop_helper( O op,
 	 op( arg , arg_bytes, i);
 
 }
-
+*/
 
 
 template<class O>  void loop_exec( O op,
