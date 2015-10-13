@@ -7,15 +7,25 @@
 
 #include <stdio.h>
 
-__device__ void Run_Me( void* INPUT, unsigned  n , unsigned size)
-{
-	struct arg * The_Array = (struct arg*) INPUT;
 
-	int ID = size;
-	if(ID < 2){
-	The_Array->c[ID] = The_Array->a[ID] + The_Array->b[ID];
+
+#define LOOP_EXEC(func,arg, arg_bytes,n) loop_helper<<<ceildiv(n,256),256>>>(func, arg, arg_bytes)
+
+
+
+
+class Runme {
+public:
+	__device__ void operator() ( void* INPUT, unsigned n ,unsigned size)
+	{
+		struct arg * The_Array = (struct arg*) INPUT;
+
+		int ID = size;
+		if(ID < 2){
+			The_Array->c[ID] = The_Array->a[ID] + The_Array->b[ID];
+		}
 	}
-}
+};
 
 
 
@@ -67,7 +77,11 @@ int main()
 
 
 
-	loop_exec( Run_Me , arg_pass(a) , 2 , 2);
+	std::cout << "HERE" <<std::endl;
+	//loop_exec( Runme() , arg_pass(a) , 2 , 2);
+	LOOP_EXEC(Runme(), arg_pass(a), 2 ,2);
+
+	std::cout<< "WHAT THE" << std::endl;
 
 	cudaDeviceSynchronize();
 
@@ -75,13 +89,64 @@ int main()
 
 	CUDACALL( cudaMemcpy(d , a.c , 2*sizeof(unsigned) , cudaMemcpyDeviceToHost));
 
-	cudaDeviceReset();
-
-	printf( "%d , %d\n", d[0] , d[1]);
 
 
+	//printf( "%d , %d\n", d[0] , d[1]);
+
+	std::cout<< d[0] << " , " << d[1] <<std::endl;
 
 	return 0;
 
+}
+
+typedef void (*loop_kernal_func)(void*,unsigned,unsigned) ;
+
+
+
+template<class O> __global__
+void loop_helper( O op,
+				void* arg, unsigned arg_bytes)
+{
+	 unsigned i = CUDAINDEX;
+
+	 op( arg , arg_bytes, i);
+
+}
+
+
+
+template<class O>  void loop_exec( O op,
+				void* arg, unsigned arg_bytes,
+				unsigned n)
+{
+	loop_kernal_func *h_f , *d_f;
+	//this should be constant memory.
+
+	/*
+	h_f = (loop_kernal_func*)malloc(sizeof(loop_kernal_func));
+	h_f[0] = loop_kernal;
+	CUDACALL(cudaMalloc((void**)&d_f,sizeof(loop_kernal_func)));
+
+	//std::cout<< "Here1"<<std::endl;
+	CUDACALL(cudaMemcpy( d_f , h_f , sizeof(loop_kernal_func) ,cudaMemcpyHostToDevice ));
+	//std::cout<< "Here2"<<std::endl;
+	*/
+
+
+
+
+	CUDACALL(cudaMallocManaged(&h_f , sizeof(loop_kernal_func)));
+	//h_f[0] = loop_kernal;
+
+
+	//CUDALAUNCH( loop_helper , n , (h_f,arg, arg_bytes));
+
+	loop_helper<<< ceildiv((n), 256), 256 >>>(O(),arg, arg_bytes);
+
+	//std::cout<< "Here3"<<std::endl;
+
+	//CUDALAUNCH( (*loop_kernal) , n , (arg, arg_bytes,-1));
+	//not sure what else to put. I really would like to work in a class for this part
+	// Going to have to talk it out via email... I guess
 }
 

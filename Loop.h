@@ -18,7 +18,8 @@ struct arg{
 
 
 typedef void (*loop_kernal)(void* , unsigned, unsigned);
-extern "C" void loop_exec( void (*loop_kernal)(void*,unsigned, unsigned),
+template<class O>
+void loop_exec( O op,
 				void* arg, unsigned arg_bytes,
 				unsigned n);
 
@@ -26,7 +27,7 @@ extern "C" void* loop_malloc( unsigned n);
 extern "C" void loop_free( void *p);
 
 extern "C" void GENDATA( void *p);
-
+template<class O> __global__ void loop_helper( O op, void* arg, unsigned arg_bytes);
 
 
 #endif /* LOOP_H_ */
